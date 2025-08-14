@@ -1,0 +1,4 @@
+# Données brutes 10x (gardées hors Git)
+PBMC_3k/
+# Option : garder le dossier vide
+# !PBMC_3k/.keep
