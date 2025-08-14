@@ -1,56 +1,77 @@
 # Single-cell Tuto R
 
-Ce projet propose un environnement reproductible pour l'analyse de données single-cell avec **Seurat** et **Azimuth**, géré avec `renv` dans R et configuré pour fonctionner sous **WSL2** (Ubuntu).
+Ce projet propose un environnement reproductible pour l'analyse de données single-cell avec **Seurat** et **Azimuth**, géré avec `renv` sous **WSL2 (Ubuntu 22.04)**.
 
-## 📂 Contenu
+## 📁 Contenu
 
 - `renv.lock` : fige toutes les dépendances R du projet.
 - `renv/activate.R` : active l'environnement `renv` au lancement de R.
-- `setup_sc_env.sh` : script bash pour initialiser proprement l'environnement.
+- `renv/settings.json` : ignore les dépendances de type `Suggests` (comme `JASPAR2020`) pour éviter les erreurs d'installation inutiles.
+- `setup_sc_env.sh` : script shell d’installation automatique des paquets R et de l’environnement.
 
 ## ⚙️ Prérequis
 
-- R >= 4.5.1
+- R ≥ 4.5.1 (testé avec succès)
 - WSL2 avec Ubuntu 22.04
-- `git`, `curl`, `gcc`, `libgsl0-dev`, `libfftw3-dev`, `liblapack-dev`, etc.
-- [micromamba](https://mamba.readthedocs.io/en/latest/micromamba.html) ou un environnement Python préactivé si besoin
+- `git`, `curl`, `gcc`, `make`, `libssl-dev`
+- **Dépendances système requises pour Azimuth :**
+  - `libgsl0-dev` (pour `DirichletMultinomial`)
+  - `libfftw3-dev`
+  - `liblapack-dev`
+- [micromamba](https://mamba.readthedocs.io/en/latest/micromamba.html) (ou un autre système de gestion d'environnement Python)
+- Connexion internet active (pour récupérer les packages CRAN, GitHub et Bioconductor)
 
-## 🔧 Installation
+💡 **Recommandation Microsoft** : pour de meilleures performances, clone ce projet dans un répertoire Linux (ex. `/home/tonutilisateur/`) au lieu d’un répertoire Windows monté (`/mnt/c/...`).
 
-Depuis WSL, clone le projet et lance le script d'installation R :
+---
+
+## 🚀 Installation
+
+Depuis WSL, clone le projet et exécute le script :
 
 ```bash
-# Clone du repo
-cd ~/Documents/R_for_WSL
+# 1. Cloner le repo (dans un répertoire Linux de préférence)
+cd ~
 git clone https://github.com/Koryums/singlecell_tuto_R.git
 cd singlecell_tuto_R
 
-# (Optionnel) Active ton environnement micromamba
-micromamba activate sc  # ou autre selon ton setup
+# 2. (Optionnel) Activer ton environnement micromamba (si Python est requis)
+micromamba activate sc  # ou conda activate sc
 
-# Exécute le setup R (installation des packages R, renv, Azimuth...)
+# 3. Exécuter le script shell qui :
+# - crée le dossier lib utilisateur
+# - installe les dépendances Bioconductor
+# - installe Azimuth (en ignorant les Suggests)
 bash setup_sc_env.sh
-```
+Le script R prend soin de :
 
-## 📚 Notes
+forcer l’utilisation de Bioconductor 3.21, compatible avec R 4.5
 
-- Le projet utilise `renv` pour éviter les conflits de versions de packages.
-- Le package **Azimuth** est installé manuellement via GitHub et ses dépendances Bioconductor sont gérées automatiquement.
-- Si besoin de relancer une session R :
+installer les packages bloquants manuellement (TFBSTools, DirichletMultinomial, etc.)
 
-```r
+utiliser remotes::install_github() pour Azimuth
+
+capturer un snapshot propre à la fin avec renv
+
+🧪 Test rapide
+Une fois l’installation faite, ouvre une session R :
+
+r
+Copier
+Modifier
 renv::activate()
 library(Seurat)
 library(presto)
 library(Azimuth)
 sessionInfo()
-```
+Tu devrais voir la version correcte de R, Azimuth, Seurat, et presto chargées sans erreur.
 
-## ✉️ Contact
+🧷 Astuces
+Le script ne déclenche pas de restart de session R automatique, car tout est encapsulé sans toucher aux options globales renv.
 
-Pour toute question : [@Koryums](https://github.com/Koryums)
+Les packages sont installés dans ~/R/x86_64-pc-linux-gnu-library/4.5 pour éviter les conflits avec /usr/local.
 
----
+✉️ Contact
+Pour toute question ou suggestion : @Koryums
 
 © Altograph 2025
-
